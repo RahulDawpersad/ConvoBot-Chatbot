@@ -11,12 +11,14 @@ API_KEY = 'ABFUK8eB4APHixJyTeox5YbgBYAaEN9K44CN3iLm'
 # Initialize the Cohere client
 co = cohere.Client(API_KEY)
 
+# Pretrained Data Model = c4ai-aya-23
+
 def ask_question(question):
     try:
         # Use the Cohere API to generate a response
         response = co.generate(
-            model='c4ai-aya-23',
-            prompt=question,
+            model='command',
+            prompt=f"{question}\n",
             max_tokens=250,
             temperature=0.9,  # Controls randomness; lower value makes responses more deterministic
             stop_sequences=["\n"]  # Ensure the response stops at a sensible point
