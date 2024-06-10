@@ -53,7 +53,7 @@
       menuButton.classList.toggle("active");
     }
 
-    function deleteMessage(index) {
+   function deleteMessage(index) {
       console.log('Deleting message at index:', index);
       fetch('/delete_message', {
         method: 'POST',
@@ -142,7 +142,7 @@
           </p>
           {% if message.bot %}
           <div class="message-buttons">
-            <button class="delete-button" title="Delete" onclick="deleteMessage({{ loop.index0 }})">
+          <button class="delete-button" title="Delete" onclick="deleteMessage({{ loop.index0 }})">
               <i class="fa-solid fa-trash"></i>
             </button>
             <button class="copy-button" title="Copy Text" onclick="copyToClipboard('{{ message.bot | e | replace(" \'", "\\\'" ) |
