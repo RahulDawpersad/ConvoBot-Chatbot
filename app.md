@@ -1,11 +1,8 @@
 from flask import Flask, render_template, request, session, redirect, url_for, jsonify
-from flask_cors import CORS
 import os
 import cohere
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS
-
 app.secret_key = os.urandom(24)  # Generate a secure secret key
 
 # Set your Cohere API key
@@ -60,17 +57,14 @@ def chat():
 
 @app.route("/delete_message", methods=["POST"])
 def delete_message():
-    try:
-        data = request.json
-        index = int(data.get('index'))
-        if 'chat_history' in session and 0 <= index < len(session['chat_history']):
-            del session['chat_history'][index]
-            session.modified = True
-            return jsonify({'success': True}), 200
-        else:
-            return jsonify({'success': False, 'error': 'Invalid index'}), 400
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)}), 500
+    index = int(request.json['index'])
+    print('Deleting message at index:', index)
+    if 'chat_history' in session and 0 <= index < len(session['chat_history']):
+        del session['chat_history'][index]
+        session.modified = True
+        return jsonify({'success': True}), 200
+    else:
+        return jsonify({'success': False}), 400
 
 if __name__ == "__main__":
     app.run(debug=True)

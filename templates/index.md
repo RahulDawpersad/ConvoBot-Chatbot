@@ -9,18 +9,49 @@
   <script src="https://kit.fontawesome.com/655b3b7e45.js" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="../static/style.css" />
   <script>
-    function validateForm() {
+  
+    function scrollToBottom() {
+      var chatBox = document.getElementById("chat-box");
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function addMessage(user, bot) {
+      var chatBox = document.getElementById("chat-box");
+
+      // Create user message element
+      var userMessage = document.createElement("div");
+      userMessage.className = "user-message";
+      userMessage.innerHTML = '<i class="fa-solid fa-user"></i> ' + user;
+      chatBox.appendChild(userMessage);
+
+      // Create bot response element
+      var botResponse = document.createElement("div");
+      botResponse.className = "bot-response";
+      botResponse.innerHTML = '<i class="fa-solid fa-robot"></i> ' + bot;
+      chatBox.appendChild(botResponse);
+
+      // Scroll to the bottom of the chat container
+      scrollToBottom();
+    }
+
+    function validateForm(event) {
+      // Prevent the default form submission behavior
+      event.preventDefault();
+
       var userInput = document.getElementById("user_input").value;
       if (userInput.trim() === "") {
         document.getElementById("error_message").innerText = "Please enter text.";
         return false;
       }
-      return true;
+      // Optionally, you can submit the form programmatically if needed
+      document.getElementById("chatForm").submit();
     }
 
     function toggleSidebar() {
       var sidebar = document.querySelector(".sidebar");
+      var menuButton = document.querySelector(".menu-button");
       sidebar.classList.toggle("active");
+      menuButton.classList.toggle("active");
     }
 
     function deleteMessage(index) {
@@ -81,6 +112,8 @@
 </head>
 
 <body>
+  <!-- Inside the <body> tag -->
+
   <div class="main-container">
     <div class="sidebar">
       <div class="sidebar-content">
@@ -91,12 +124,16 @@
         It does not generate code or massive amounts of text as it is a
         pretrained model trained on limited data.
       </p>
+      <p>
+        <p>ConvoBot typically responds within approximately 9 seconds. 
+          Please be patient while waiting for the response.</p>
+      </p>
     </div>
     <div class="chat-container">
       <div class="chat-box" id="chat-box">
         <div class="logo-container">
           <p class="heading">DESIGNX</p>
-          <p>Developed By Rahul Dawpersad</p>
+          <p>Developed By <a href="#" class="link">Rahul Dawpersad</a></p>
         </div>
         {% for message in chat_history %}
         <div>
@@ -122,7 +159,7 @@
         </div>
         {% endfor %}
       </div>
-      <form method="post" onsubmit="return validateForm()" class="input-form">
+      <form id="chatForm" method="post" onsubmit="return validateForm(event)" class="input-form">
         <div class="input-container">
           <input type="text" id="user_input" name="user_input" placeholder="Message ConvoBot" autocomplete="off"
             oninput="adjustWidth()" class="dynamic-input" />
@@ -136,7 +173,9 @@
   </div>
   <button class="menu-button" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
 
-  
+  <script>
+    window.onload = scrollToBottom;
+  </script>
 </body>
 
 </html>
