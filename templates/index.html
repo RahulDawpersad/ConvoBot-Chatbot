@@ -157,10 +157,10 @@
             <button class="delete-button" title="Delete" onclick="deleteMessage({{ loop.index0 }})">
               <i class="fa-solid fa-trash"></i>
             </button>
-            <button class="copy-button" title="Copy Text" onclick="copyToClipboard('{{ message.bot | e | replace(" \'", "\\\'" ) | replace("\"", "\\\"") }}', event)">
+            <button class="copy-button" title="Copy Text" onclick="copyToClipboard('{{ message.bot | e | replace('\'', '\\\'') | replace('\"', '\\\"') }}', event)">
               <i class="fa-solid fa-copy"></i>
             </button>
-            <button class="share-button" title="Share" onclick="shareResponse('{{ message.user }}', '{{ message.bot }}')">
+            <button class="share-button" title="Share" onclick="shareResponse('{{ message.user | e | replace('\'', '\\\'') }}', '{{ message.bot | e | replace('\'', '\\\'') }}')">
               <i class="fa-solid fa-share"></i>
             </button>
           </div>
@@ -174,17 +174,15 @@
           <button type="submit">
             Send <i class="fa-solid fa-paper-plane"></i>
           </button>
-        </div>
-        <p id="error_message" class="error-message"></p>
-      </form>
-    </div>
-  </div>
-  <button class="menu-button" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
-
-
-  <script>
-    window.onload = scrollToBottom;
-  </script>
-</body>
-
-</html>
+          </div>
+          <p id="error_message" class="error-message"></p>
+          </form>
+          </div>
+          
+            </div>
+            <button class="menu-button" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+            <script>
+              window.onload = scrollToBottom;
+            </script>
+          </body>
+          </html>
