@@ -11,7 +11,8 @@ API_KEY = 'ABFUK8eB4APHixJyTeox5YbgBYAaEN9K44CN3iLm'
 # Initialize the Cohere client
 co = cohere.Client(API_KEY)
 
-# Pretrained Data Model = c4ai-aya-23
+# Define approximate response time (in seconds)
+APPROX_RESPONSE_TIME = 9
 
 def ask_question(question):
     try:
@@ -19,7 +20,7 @@ def ask_question(question):
         response = co.generate(
             model='command',
             prompt=f"{question}\n",
-            max_tokens=250,
+            max_tokens=500,  # Increase tokens to allow detailed response
             temperature=0.9,  # Controls randomness; lower value makes responses more deterministic
             stop_sequences=["\n"]  # Ensure the response stops at a sensible point
         )
@@ -38,13 +39,21 @@ def chat():
 
     if request.method == "POST":
         user_input = request.form["user_input"]
+        
+        # Display approximate response time to the user
+        response_message = f"Your question is being processed. Approximate response time: {APPROX_RESPONSE_TIME} seconds."
+        session['chat_history'].append({"user": user_input, "bot": response_message})
+        
+        # Generate response asynchronously
         response = ask_question(user_input)
-        session['chat_history'].append({"user": user_input, "bot": response})
+        
+        # Update chat history with actual response
+        session['chat_history'][-1]["bot"] = response
+        
         session.modified = True
         return redirect(url_for('chat'))
 
     return render_template("index.html", chat_history=session['chat_history'])
-
 
 @app.route("/delete_message", methods=["POST"])
 def delete_message():
@@ -59,3 +68,4 @@ def delete_message():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
