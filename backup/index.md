@@ -9,7 +9,6 @@
   <script src="https://kit.fontawesome.com/655b3b7e45.js" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="../static/style.css" />
   <script>
-  
     function scrollToBottom() {
       var chatBox = document.getElementById("chat-box");
       chatBox.scrollTop = chatBox.scrollHeight;
@@ -18,24 +17,20 @@
     function addMessage(user, bot) {
       var chatBox = document.getElementById("chat-box");
 
-      // Create user message element
       var userMessage = document.createElement("div");
       userMessage.className = "user-message";
       userMessage.innerHTML = '<i class="fa-solid fa-user"></i> ' + user;
       chatBox.appendChild(userMessage);
 
-      // Create bot response element
       var botResponse = document.createElement("div");
       botResponse.className = "bot-response";
       botResponse.innerHTML = '<i class="fa-solid fa-robot"></i> ' + bot;
       chatBox.appendChild(botResponse);
 
-      // Scroll to the bottom of the chat container
       scrollToBottom();
     }
 
     function validateForm(event) {
-      // Prevent the default form submission behavior
       event.preventDefault();
 
       var userInput = document.getElementById("user_input").value;
@@ -43,7 +38,6 @@
         document.getElementById("error_message").innerText = "Please enter text.";
         return false;
       }
-      // Optionally, you can submit the form programmatically if needed
       document.getElementById("chatForm").submit();
     }
 
@@ -63,33 +57,65 @@
         },
         body: JSON.stringify({ index: index }),
       })
-        .then(response => {
-          if (response.ok) {
-            location.reload(); // For example, reload the page
-          } else {
-            console.error('Error deleting message');
-          }
-        })
-        .catch(error => {
-          console.error('Error:', error);
-        });
+      .then(response => {
+        console.log('Response status:', response.status);
+        return response.json();
+      })
+      .then(data => {
+        console.log('Response data:', data);
+        if (data.success) {
+          location.reload();
+        } else {
+          console.error('Error deleting message:', data.error);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
     }
 
-    function copyToClipboard(text) {
-      // Create a temporary textarea element
-      const tempTextArea = document.createElement('textarea');
-      tempTextArea.value = text;
-      document.body.appendChild(tempTextArea);
+    // function copyToClipboard(text) {
+    //   const tempTextArea = document.createElement('textarea');
+    //   tempTextArea.value = text;
+    //   document.body.appendChild(tempTextArea);
 
-      // Select the text and copy it
-      tempTextArea.select();
-      document.execCommand('copy');
+    //   tempTextArea.select();
+    //   document.execCommand('copy');
 
-      // Remove the temporary textarea element
-      document.body.removeChild(tempTextArea);
+    //   document.body.removeChild(tempTextArea);
 
-      alert("Text copied to clipboard");
-    }
+    //   alert("Text copied to clipboard");
+    // }
+    function copyToClipboard(text, event) {
+  const tempTextArea = document.createElement('textarea');
+  tempTextArea.value = text;
+  document.body.appendChild(tempTextArea);
+
+  tempTextArea.select();
+  document.execCommand('copy');
+
+  document.body.removeChild(tempTextArea);
+
+  // Create and show the notification
+  const notification = document.createElement('div');
+  notification.className = 'notification show';
+  notification.innerText = 'Text copied to clipboard';
+
+  // Position the notification just below the button
+  const rect = event.target.getBoundingClientRect();
+  notification.style.top = `${rect.bottom + window.scrollY + 10}px`;
+  notification.style.left = `${rect.left + window.scrollX}px`;
+
+  document.body.appendChild(notification);
+
+  // Hide the notification after 3 seconds
+  setTimeout(() => {
+    notification.className = notification.className.replace('show', '');
+    document.body.removeChild(notification);
+  }, 3000);
+}
+
+
     function shareResponse(userMessage, botResponse) {
       console.log("User Message:", userMessage);
       console.log("Bot Response:", botResponse);
@@ -112,8 +138,6 @@
 </head>
 
 <body>
-  <!-- Inside the <body> tag -->
-
   <div class="main-container">
     <div class="sidebar">
       <div class="sidebar-content">
@@ -124,10 +148,8 @@
         It does not generate code or massive amounts of text as it is a
         pretrained model trained on limited data.
       </p>
-      <p>
-        <p>ConvoBot typically responds within approximately 9 seconds. 
+      <p>ConvoBot typically responds within approximately 9 seconds. 
           Please be patient while waiting for the response.</p>
-      </p>
     </div>
     <div class="chat-container">
       <div class="chat-box" id="chat-box">
@@ -148,12 +170,13 @@
             <button class="delete-button" title="Delete" onclick="deleteMessage({{ loop.index0 }})">
               <i class="fa-solid fa-trash"></i>
             </button>
-            <button class="copy-button" title="Copy Text" onclick="copyToClipboard('{{ message.bot | e | replace(" \'", "\\\'" ) |
-              replace("\"", "\\\"") }}')">
+            <!-- <button class="copy-button" title="Copy Text" onclick="copyToClipboard('{{ message.bot | e | replace(" \'", "\\\'" ) | replace("\"", "\\\"") }}')"> -->
+              <button class="copy-button" title="Copy Text" onclick="copyToClipboard('{{ message.bot | e | replace(" \'", "\\\'" ) | replace("\"", "\\\"") }}', event)">
               <i class="fa-solid fa-copy"></i>
             </button>
-            <button class="share-button"
-            title="Share" onclick="shareResponse('{{ message.user }}', '{{ message.bot }}')"><i class="fa-solid fa-share"></i></button>
+            <button class="share-button" title="Share" onclick="shareResponse('{{ message.user }}', '{{ message.bot }}')">
+              <i class="fa-solid fa-share"></i>
+            </button>
           </div>
           {% endif %}
         </div>
@@ -161,8 +184,7 @@
       </div>
       <form id="chatForm" method="post" onsubmit="return validateForm(event)" class="input-form">
         <div class="input-container">
-          <input type="text" id="user_input" name="user_input" placeholder="Message ConvoBot" autocomplete="off"
-            oninput="adjustWidth()" class="dynamic-input" />
+          <input type="text" id="user_input" name="user_input" placeholder="Message ConvoBot" autocomplete="off" oninput="adjustWidth()" class="dynamic-input" />
           <button type="submit">
             Send <i class="fa-solid fa-paper-plane"></i>
           </button>
@@ -172,6 +194,7 @@
     </div>
   </div>
   <button class="menu-button" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+
 
   <script>
     window.onload = scrollToBottom;

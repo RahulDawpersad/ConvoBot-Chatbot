@@ -2,14 +2,16 @@ from flask import Flask, render_template, request, session, redirect, url_for, j
 from flask_cors import CORS
 import os
 import cohere
+import logging
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS
 
-app.secret_key = os.urandom(24)  # Generate a secure secret key
+# Secure secret key (ensure this is set correctly in a production environment)
+app.secret_key = os.urandom(24)
 
-# Set your Cohere API key
-API_KEY = 'ABFUK8eB4APHixJyTeox5YbgBYAaEN9K44CN3iLm'
+# Set your Cohere API key from environment variable or default (make sure to set this on Vercel)
+API_KEY = os.getenv('COHERE_API_KEY', 'ABFUK8eB4APHixJyTeox5YbgBYAaEN9K44CN3iLm')
 
 # Initialize the Cohere client
 co = cohere.Client(API_KEY)
@@ -33,6 +35,7 @@ def ask_question(question):
         return generated_text
 
     except Exception as e:
+        app.logger.error(f"Error in ask_question: {e}")
         return f"An error occurred: {e}"
 
 @app.route("/", methods=["GET", "POST"])
@@ -62,7 +65,7 @@ def chat():
 def delete_message():
     try:
         data = request.json
-        index = int(data.get('index'))
+        index = int(data.get('index', -1))  # Use default value -1 if index is not found
         if 'chat_history' in session and 0 <= index < len(session['chat_history']):
             del session['chat_history'][index]
             session.modified = True
@@ -70,8 +73,9 @@ def delete_message():
         else:
             return jsonify({'success': False, 'error': 'Invalid index'}), 400
     except Exception as e:
+        app.logger.error(f"Error in delete_message: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG)
     app.run(debug=True)
-
