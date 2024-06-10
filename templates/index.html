@@ -48,7 +48,7 @@
       menuButton.classList.toggle("active");
     }
 
-    function deleteMessage(index) {
+   function deleteMessage(index) {
       console.log('Deleting message at index:', index);
       fetch('/delete_message', {
         method: 'POST',
@@ -119,8 +119,15 @@
         It does not generate code or massive amounts of text as it is a
         pretrained model trained on limited data.
       </p>
+<<<<<<< HEAD
       <p>ConvoBot typically responds within approximately 9 seconds. 
           Please be patient while waiting for the response.</p>
+=======
+        <p>
+          ConvoBot typically responds within approximately 9 seconds. 
+          Please be patient while waiting for the response.
+        </p>
+>>>>>>> fd1d4fad6c8d5a34c5a56f34345177482a2d26b0
     </div>
     <div class="chat-container">
       <div class="chat-box" id="chat-box">
@@ -138,7 +145,7 @@
           </p>
           {% if message.bot %}
           <div class="message-buttons">
-            <button class="delete-button" title="Delete" onclick="deleteMessage({{ loop.index0 }})">
+          <button class="delete-button" title="Delete" onclick="deleteMessage({{ loop.index0 }})">
               <i class="fa-solid fa-trash"></i>
             </button>
             <button class="copy-button" title="Copy Text" onclick="copyToClipboard('{{ message.bot | e | replace(" \'", "\\\'" ) | replace("\"", "\\\"") }}')">
