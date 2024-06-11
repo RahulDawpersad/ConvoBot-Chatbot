@@ -49,30 +49,30 @@
     }
 
     function deleteMessage(index) {
-      console.log('Deleting message at index:', index);
-      fetch('/delete_message', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ index: index }),
-      })
-      .then(response => {
-        console.log('Response status:', response.status);
-        return response.json();
-      })
-      .then(data => {
-        console.log('Response data:', data);
-        if (data.success) {
-          location.reload();
-        } else {
-          console.error('Error deleting message:', data.error);
-        }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-      });
+  console.log('Deleting message at index:', index);
+  fetch('/delete_message', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ index: index }),
+  })
+  .then(response => {
+    console.log('Response status:', response.status);
+    return response.json();
+  })
+  .then(data => {
+    console.log('Response data:', data);
+    if (data.success) {
+      location.reload();
+    } else {
+      console.error('Error deleting message:', data.error);
     }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+  });
+}
 
     function copyToClipboard(text, event) {
       const tempTextArea = document.createElement('textarea');
